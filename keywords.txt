@@ -1,0 +1,7 @@
+SensorRoxoOBR KEYWORD1
+
+selecionarCanal KEYWORD2
+inicializar KEYWORD2
+cor KEYWORD2
+coletar KEYWORD2
+calibrar KEYWORD2
