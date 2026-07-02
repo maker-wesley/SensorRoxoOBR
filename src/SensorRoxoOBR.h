@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include <Wire.h>
-#include <Adafruit_BusIO.h>
 #include <Adafruit_TCS34725.h>
 
 class SensorRoxoOBR {
