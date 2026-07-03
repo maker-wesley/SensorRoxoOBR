@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include <Adafruit_BusIO_Register.h>
 #include <Adafruit_TCS34725.h>
 
 class SensorRoxoOBR {
@@ -14,12 +15,13 @@ class SensorRoxoOBR {
         Adafruit_TCS34725 _sensorTcs;
 
     public:
+        SensorRoxoOBR(uint8_t enderecoMultiplexador, uint8_t canalMultiplexador, uint16_t tempo_ms, uint8_t ganho);        
         SensorRoxoOBR();
         void selecionarCanal();
         bool inicializar();
         String cor();
         String coletar();
-        void calibrar(float limiar_branco, float limiar_preto, float limiar_vermelho, float limiar_verde, float limiar_azul)
-}
+        void calibrar(float limiar_branco, float limiar_preto, float limiar_vermelho, float limiar_verde, float limiar_azul);
+};
 
 #endif
