@@ -1,4 +1,3 @@
-#include <Wire.h>
 #include <SensorRoxoOBR.h>
 
 SensorRoxoOBR sensorEsquerdo(0x70, 0, 50, 4);
