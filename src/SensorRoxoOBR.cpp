@@ -1,11 +1,14 @@
 #include <SensorRoxoOBR.h>
 
+// Adicionado um retorno padrão (default) caso o valor inserido seja inválido
 uint8_t traduzirTempo(uint16_t tempo) {
     if (tempo == 24)  return TCS34725_INTEGRATIONTIME_24MS;
     else if (tempo == 50) return TCS34725_INTEGRATIONTIME_50MS;
     else if (tempo == 101) return TCS34725_INTEGRATIONTIME_101MS;
     else if (tempo == 154) return TCS34725_INTEGRATIONTIME_154MS;
     else if (tempo == 700) return TCS34725_INTEGRATIONTIME_600MS;
+    
+    return TCS34725_INTEGRATIONTIME_50MS; // Fallback de segurança
 }
 
 tcs34725Gain_t traduzirGanho(uint8_t ganho) {
@@ -13,10 +16,13 @@ tcs34725Gain_t traduzirGanho(uint8_t ganho) {
     else if (ganho == 4) return TCS34725_GAIN_4X;
     else if (ganho == 16) return TCS34725_GAIN_16X;
     else if (ganho == 60) return TCS34725_GAIN_60X;
+    
+    return TCS34725_GAIN_4X; // Fallback de segurança
 }
 
+// CORREÇÃO: Uso da Lista de Inicialização para o objeto da classe
 SensorRoxoOBR::SensorRoxoOBR(uint8_t enderecoMultiplexador, uint8_t canalMultiplexador, uint16_t tempo_ms, uint8_t ganho)
-    : _sensorTcs(traduzirTempo(tempo_ms), traduzirGanho(ganho)) 
+  : _sensorTcs(traduzirTempo(tempo_ms), traduzirGanho(ganho)) 
 {
     _enderecoMultiplexador = enderecoMultiplexador;
     _canalMultiplexador = canalMultiplexador;
@@ -40,12 +46,14 @@ String SensorRoxoOBR::cor()
     selecionarCanal();
     _sensorTcs.getRawData(&_r, &_g, &_b, &_c);
 
+    // CORREÇÃO: Verificar o zero ANTES da divisão
+    if (_c == 0) return "erro na leitura do sensor, verifique.";
+
     float rn = (float) _r/_c;
     float gn = (float) _g/_c;
     float bn = (float) _b/_c;
 
-    if (_c == 0) return "erro na leitura do sensor, verifique.";
-    else if (_c > _lbr) return "branco";
+    if (_c > _lbr) return "branco";
     else if (_c < _lpr) return "preto";
     else if (rn > _lr && rn > gn && rn > bn) return "vermelho";
     else if (gn > _lg && gn > rn && gn > bn) return "verde";
@@ -67,10 +75,13 @@ String SensorRoxoOBR::coletar()
     selecionarCanal();
     _sensorTcs.getRawData(&_r, &_g, &_b, &_c);
 
+    // CORREÇÃO: Evitar erro matemático se estiver em breu total
+    if (_c == 0) return "0.00, 0.00, 0.00, 0"; 
+
     float rn = (float) _r/_c;
     float gn = (float) _g/_c;
     float bn = (float) _b/_c;
 
-    String coleta = String(rn) + ", " + String(gn) + ", " + String(bn) + ", " + String(_c);
+    String coleta = "C = " + String(_c) + ", R = " + String(rn) + ", G = " + String(gn) + ", B = " + String(bn);
     return coleta;
 }
